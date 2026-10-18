@@ -11,6 +11,7 @@ public class AppDbContext : DbContext
     public DbSet<Product> Products => Set<Product>();
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+    public DbSet<DiscountCode> DiscountCodes => Set<DiscountCode>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

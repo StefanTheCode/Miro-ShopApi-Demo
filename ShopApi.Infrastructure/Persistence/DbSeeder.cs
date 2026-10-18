@@ -21,8 +21,16 @@ public static class DbSeeder
             new() { Name = "USB-C Hub",            Price = 39.90m,  StockQuantity = 100 }
         };
 
+        var discounts = new List<DiscountCode>
+        {
+            new() { Code = "WELCOME10", Percentage = 10m,  ExpiresAtUtc = DateTime.UtcNow.AddMonths(1) },
+            new() { Code = "EXPIRED20", Percentage = 20m,  ExpiresAtUtc = DateTime.UtcNow.AddDays(-5) },
+            new() { Code = "HALFOFF",   Percentage = 150m, ExpiresAtUtc = DateTime.UtcNow.AddMonths(1) }
+        };
+
         db.Customers.Add(customer);
         db.Products.AddRange(products);
+        db.DiscountCodes.AddRange(discounts);
         await db.SaveChangesAsync();
     }
 }

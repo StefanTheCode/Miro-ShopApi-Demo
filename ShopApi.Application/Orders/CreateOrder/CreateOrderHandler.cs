@@ -5,18 +5,23 @@ namespace ShopApi.Application.Orders.CreateOrder;
 
 /// <summary>
 /// Handles the "Create Order" use case:
-/// validates the request, loads the products, builds the order, and persists it.
+/// validates the request, loads the products, applies a discount code (new), and persists it.
 /// Controller -> Handler -> Repositories -> DbContext -> DB
 /// </summary>
 public class CreateOrderHandler
 {
     private readonly IOrderRepository _orders;
     private readonly IProductRepository _products;
+    private readonly IDiscountCodeRepository _discounts;
 
-    public CreateOrderHandler(IOrderRepository orders, IProductRepository products)
+    public CreateOrderHandler(
+        IOrderRepository orders,
+        IProductRepository products,
+        IDiscountCodeRepository discounts)
     {
         _orders = orders;
         _products = products;
+        _discounts = discounts;
     }
 
     public async Task<CreateOrderResult> HandleAsync(CreateOrderCommand command, CancellationToken ct = default)
@@ -45,6 +50,16 @@ public class CreateOrderHandler
                 };
             }).ToList()
         };
+
+        // NEW: apply a discount code if one was supplied
+        if (!string.IsNullOrWhiteSpace(command.DiscountCode))
+        {
+            var discount = await _discounts.GetByCodeAsync(command.DiscountCode, ct);
+            if (discount is not null)
+            {
+                order.DiscountPercentage = discount.Percentage;
+            }
+        }
 
         await _orders.AddAsync(order, ct);
         await _orders.SaveChangesAsync(ct);

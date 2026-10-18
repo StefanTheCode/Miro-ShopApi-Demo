@@ -15,6 +15,7 @@ public static class DependencyInjection
 
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IDiscountCodeRepository, DiscountCodeRepository>();
 
         // Application use-case handler
         services.AddScoped<CreateOrderHandler>();
