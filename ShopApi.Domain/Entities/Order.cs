@@ -13,5 +13,9 @@ public class Order
     // One order -> many order items
     public ICollection<OrderItem> Items { get; set; } = new List<OrderItem>();
 
-    public decimal Total => Items.Sum(i => i.UnitPrice * i.Quantity);
+    // Applied discount (0 = none)
+    public decimal DiscountPercentage { get; set; }
+
+    public decimal Total =>
+        Items.Sum(i => i.UnitPrice * i.Quantity) * (1 - DiscountPercentage / 100m);
 }
